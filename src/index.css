@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: 'Bricolage Grotesque', 'Arial Black', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --color-brand-50: #fff0f6;
+  --color-brand-100: #ffd6e8;
+  --color-brand-300: #ff8ab8;
+  --color-brand-400: #ff5c99;
+  --color-brand-500: #ff3d7f;
+  --color-brand-600: #e0215f;
+  --color-brand-700: #b3144a;
+
+  --color-pop-400: #7cf2ff;
+  --color-pop-500: #22d3ee;
+  --color-sun-400: #ffd84d;
+
+  --color-ink-950: #0b0b14;
+  --color-ink-900: #12121f;
+  --color-ink-800: #1b1b2e;
+  --color-ink-700: #2a2a44;
+  --color-ink-500: #6b6b8f;
+  --color-ink-300: #b4b4cf;
+  --color-paper: #fff7fb;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-paper text-ink-900 font-sans antialiased dark:bg-ink-950 dark:text-white;
+    min-height: 100dvh;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@utility card {
+  @apply rounded-2xl border border-ink-900/10 bg-white shadow-sm dark:border-white/10 dark:bg-ink-900;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold transition active:scale-95 disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-brand-500 text-white shadow-[0_4px_0_0] shadow-brand-700 hover:bg-brand-400;
+}
+@utility btn-ghost {
+  @apply btn bg-ink-900/5 hover:bg-ink-900/10 dark:bg-white/10 dark:hover:bg-white/15;
+}
+@utility chip {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
