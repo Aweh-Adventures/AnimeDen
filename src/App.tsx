@@ -2,7 +2,8 @@ import { createHashRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout'
 import AnimeDetail from './pages/AnimeDetail'
 import Home from './pages/Home'
-import { Game, GameEndless, Notify, NotFound, Tracker } from './pages/Placeholders'
+import { Game, GameEndless, Notify, NotFound } from './pages/Placeholders'
+import Tracker from './pages/Tracker'
 
 // Hash routing so GitHub Pages serves every route from index.html.
 const router = createHashRouter([

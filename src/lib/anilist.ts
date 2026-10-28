@@ -299,11 +299,67 @@ export async function fetchTrending(opts: QueryOptions = {}): Promise<Media[]> {
   return data.Page.media
 }
 
+export async function searchAnime(search: string, opts: QueryOptions = {}): Promise<Media[]> {
+  const data = await anilist<{ Page: { media: Media[] } }>(
+    `query ($search: String) {
+      Page(perPage: 20) {
+        media(search: $search, type: ANIME, sort: SEARCH_MATCH, isAdult: false) { ${MEDIA_FIELDS} }
+      }
+    }`,
+    { search },
+    { ttl: 12 * HOUR, ...opts },
+  )
+  return data.Page.media
+}
+
+export interface AiringEpisode {
+  mediaId: number
+  episode: number
+  airingAt: number
+}
+
+/** Episodes of the given shows airing between two unix times (seconds). */
+export async function fetchAiringBetween(
+  mediaIds: number[],
+  from: number,
+  to: number,
+  opts: QueryOptions = {},
+): Promise<AiringEpisode[]> {
+  if (!mediaIds.length) return []
+  const out: AiringEpisode[] = []
+  for (let page = 1; page <= 5; page++) {
+    const data = await anilist<{ Page: { pageInfo: { hasNextPage: boolean }; airingSchedules: AiringEpisode[] } }>(
+      `query ($ids: [Int], $from: Int, $to: Int, $page: Int) {
+        Page(page: $page, perPage: 50) {
+          pageInfo { hasNextPage }
+          airingSchedules(mediaId_in: $ids, airingAt_greater: $from, airingAt_lesser: $to, sort: TIME) {
+            mediaId episode airingAt
+          }
+        }
+      }`,
+      { ids: [...new Set(mediaIds)].sort((a, b) => a - b), from, to, page },
+      { ttl: 15 * MINUTE, ...opts },
+    )
+    out.push(...data.Page.airingSchedules)
+    if (!data.Page.pageInfo.hasNextPage) break
+  }
+  return out
+}
+
+export interface StreamingLink {
+  url: string
+  site: string
+  type: string | null
+  icon: string | null
+  color: string | null
+  language: string | null
+}
+
 export interface MediaDetail extends Media {
   description: string | null
   season: string | null
   studios: { nodes: { name: string }[] }
-  siteUrl: string
+  externalLinks: StreamingLink[]
 }
 
 export async function fetchMediaDetail(id: number, opts: QueryOptions = {}): Promise<MediaDetail | null> {
@@ -314,7 +370,7 @@ export async function fetchMediaDetail(id: number, opts: QueryOptions = {}): Pro
         description(asHtml: false)
         season
         studios(isMain: true) { nodes { name } }
-        siteUrl
+        externalLinks { url site type icon color language }
       }
     }`,
     { id },

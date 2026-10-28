@@ -22,7 +22,7 @@ The build uses a relative base path and hash routing (`/#/tracker`), so it works
 ## Build progress
 
 - [x] Phase 1: scaffold, routing, layout, dark/light theme, AniList helper, Pages deploy
-- [ ] Phase 2: tracker core
+- [x] Phase 2: tracker core
 - [ ] Phase 3: tracker sharing
 - [ ] Phase 4: daily game
 - [ ] Phase 5: endless mode + polish

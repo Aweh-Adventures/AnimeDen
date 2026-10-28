@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import AiringToday from '../components/AiringToday'
 import MediaCard from '../components/MediaCard'
 import { ErrorMessage, Skeleton } from '../components/Status'
 import { fetchTrending } from '../lib/anilist'
@@ -34,9 +35,7 @@ export default function Home() {
             My list →
           </Link>
         </div>
-        <div className="card p-5 text-sm text-ink-500 dark:text-ink-300">
-          Add shows you're watching to your list and their new episodes will show up here.
-        </div>
+        <AiringToday />
       </section>
 
       <section>

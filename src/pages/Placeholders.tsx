@@ -1,10 +1,5 @@
 import { ComingSoon } from '../components/Status'
 
-export const Tracker = () => (
-  <ComingSoon emoji="📺" title="My List">
-    Search shows, track episodes with a big +1 button and see airing countdowns. Coming soon.
-  </ComingSoon>
-)
 export const Game = () => (
   <ComingSoon emoji="🎯" title="Daily Guess">
     Five rounds a day, same puzzle for everyone, with a shareable score. Coming soon.
