@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom'
+import Countdown from '../components/Countdown'
+import ListEditor from '../components/ListEditor'
 import { ComingSoon, ErrorMessage, Skeleton } from '../components/Status'
-import { fetchMediaDetail, formatLabel, mediaTitle } from '../lib/anilist'
+import { fetchMediaDetail, formatLabel, mediaTitle, type StreamingLink } from '../lib/anilist'
 import { useAsync } from '../lib/useAsync'
 
 function stripHtml(s: string) {
@@ -58,10 +60,46 @@ export default function AnimeDetail() {
           </span>
         ))}
       </div>
-      {m.description && <p className="mt-4 leading-relaxed whitespace-pre-line text-ink-700 dark:text-ink-300">{stripHtml(m.description)}</p>}
-      <a href={m.siteUrl} target="_blank" rel="noreferrer" className="btn-ghost mt-6">
-        View on AniList
-      </a>
+      <Countdown next={m.nextAiringEpisode} className="mt-3 text-sm" />
+
+      <WhereToWatch links={m.externalLinks} />
+
+      <section className="card mt-5 p-4">
+        <ListEditor id={m.id} media={m} />
+      </section>
+
+      {m.description && <p className="mt-5 leading-relaxed whitespace-pre-line text-ink-700 dark:text-ink-300">{stripHtml(m.description)}</p>}
     </article>
+  )
+}
+
+function WhereToWatch({ links }: { links: StreamingLink[] }) {
+  const seen = new Set<string>()
+  const streams = links.filter((l) => l.type === 'STREAMING' && !seen.has(l.site) && seen.add(l.site))
+
+  return (
+    <section className="mt-5">
+      <h2 className="mb-2 text-lg font-extrabold">Where to watch</h2>
+      {streams.length ? (
+        <div className="flex flex-wrap gap-2">
+          {streams.map((l) => (
+            <a
+              key={l.url}
+              href={l.url}
+              target="_blank"
+              rel="noreferrer"
+              className="btn px-3 py-2 text-sm text-white"
+              style={{ backgroundColor: l.color ?? '#2a2a44' }}
+            >
+              {l.icon && <img src={l.icon} alt="" className="size-4" />}
+              {l.site}
+              {l.language && l.language !== 'English' && <span className="opacity-75">({l.language})</span>}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-ink-500 dark:text-ink-300">No streaming links listed for this one yet.</p>
+      )}
+    </section>
   )
 }
